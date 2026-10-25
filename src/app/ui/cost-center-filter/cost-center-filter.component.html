@@ -1,0 +1,35 @@
+<mat-card appearance="outlined" class="filter">
+  <mat-card-header>
+    <mat-card-title id="cost-center-heading">Cost centers</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+      <mat-label>Search cost centers</mat-label>
+      <input matInput type="search" [value]="query()" (input)="onSearch($event)" />
+    </mat-form-field>
+
+    <ul class="options" role="group" aria-labelledby="cost-center-heading">
+      <li>
+        <mat-checkbox [checked]="selected.length === 0" (change)="onAll($event)">All</mat-checkbox>
+      </li>
+      @for (option of filteredOptions(); track option.name) {
+        <li>
+          <mat-checkbox [checked]="isSelected(option.name)" (change)="toggled.emit(option.name)">
+            {{ option.name }}
+            @if (option.mergedInto) {
+              <small class="hint">merged into {{ option.mergedInto }}</small>
+            }
+          </mat-checkbox>
+        </li>
+      } @empty {
+        <li class="no-match">
+          @if (query().trim()) {
+            No cost centers match "{{ query() }}".
+          } @else {
+            No cost centers available.
+          }
+        </li>
+      }
+    </ul>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,51 @@
+<div class="table-wrap mat-elevation-z1">
+  <table mat-table [dataSource]="rows" [trackBy]="trackByKey" class="summary-table">
+    <caption>{{ caption }}</caption>
+
+    <ng-container matColumnDef="metric">
+      <th mat-header-cell *matHeaderCellDef scope="col">Metric</th>
+      <th mat-cell *matCellDef="let row" scope="row" class="metric">{{ row.label }}</th>
+    </ng-container>
+
+    <ng-container matColumnDef="target">
+      <th mat-header-cell *matHeaderCellDef scope="col" class="num">Target</th>
+      <td mat-cell *matCellDef="let row" class="num" data-label="Target">
+        {{ row.target | number: digitsFor(row.format) }}{{ suffixFor(row.format) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actual">
+      <th mat-header-cell *matHeaderCellDef scope="col" class="num">Actual</th>
+      <td mat-cell *matCellDef="let row" class="num" data-label="Actual">
+        {{ row.actual | number: digitsFor(row.format) }}{{ suffixFor(row.format) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="variance">
+      <th mat-header-cell *matHeaderCellDef scope="col" class="num">Variance</th>
+      <td mat-cell *matCellDef="let row" class="num variance" data-label="Variance" [class]="'status-' + row.status">
+        {{ row.variance | number: digitsFor(row.format) }}{{ varianceSuffixFor(row.format) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="variancePercentage">
+      <th mat-header-cell *matHeaderCellDef scope="col" class="num">Variance %</th>
+      <td
+        mat-cell
+        *matCellDef="let row"
+        class="num variance"
+        data-label="Variance %"
+        [class]="row.variancePercentage === null ? 'status-na' : 'status-' + row.status"
+      >
+        @if (row.variancePercentage === null) {
+          N/A
+        } @else {
+          {{ row.variancePercentage | number: '1.2-2' }}%
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" [attr.data-metric]="row.key"></tr>
+  </table>
+</div>

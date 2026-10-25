@@ -1,0 +1,116 @@
+:host {
+  display: block;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+
+.summary-table {
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding: 16px;
+    font-weight: 600;
+    font-size: 1rem;
+    background: var(--mat-table-background-color, var(--surface));
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+  }
+
+  .mat-mdc-header-cell {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  // Row-header cell: <th> picks up header alignment and loses the row divider by default.
+  th.metric {
+    text-align: left;
+    font-weight: 500;
+    padding: 0 16px;
+    border-bottom: var(--mat-table-row-item-outline-width, 1px) solid
+      var(--mat-table-row-item-outline-color, var(--border));
+  }
+
+  tr.mat-mdc-row:last-child th.metric {
+    border-bottom: 0;
+  }
+
+  .num {
+    text-align: right;
+  }
+
+  .variance {
+    font-weight: 600;
+  }
+
+  .status-favorable {
+    color: var(--good);
+  }
+
+  .status-unfavorable {
+    color: var(--bad);
+  }
+
+  .status-neutral,
+  .status-na {
+    color: var(--muted);
+  }
+}
+
+// Stack rows as cards on narrow screens. <tbody> is created by the CDK table, outside
+// this component's style scope, hence ::ng-deep for that one element.
+@media (max-width: 640px) {
+  .summary-table {
+    display: block;
+
+    tr.mat-mdc-header-row {
+      display: none;
+    }
+
+    ::ng-deep tbody {
+      display: block;
+    }
+
+    tr.mat-mdc-row {
+      display: block;
+      height: auto;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    th.mat-mdc-cell.metric,
+    th.mat-mdc-cell,
+    td.mat-mdc-cell {
+      display: flex;
+      justify-content: space-between;
+      border: 0;
+      padding: 4px 16px;
+      min-height: 0;
+    }
+
+    tr.mat-mdc-row th.metric {
+      border-bottom: 0;
+      font-weight: 600;
+    }
+
+    caption {
+      display: block;
+    }
+
+    td.mat-mdc-cell::before {
+      content: attr(data-label);
+      color: var(--muted);
+      font-weight: 400;
+    }
+  }
+}

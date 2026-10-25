@@ -1,0 +1,102 @@
+@let state = store.state();
+
+<mat-toolbar class="toolbar">
+  <span>Logistics performance</span>
+</mat-toolbar>
+<mat-progress-bar
+  class="top-progress"
+  [class.visible]="state.loading"
+  [mode]="state.loading ? 'indeterminate' : 'determinate'"
+  [value]="0"
+/>
+
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Month-to-date performance</h1>
+      @if (report(); as r) {
+        <p class="range" data-testid="date-range">
+          {{ r.date }} · day {{ r.total_daays_passed }} of {{ r.total_month_days }}
+        </p>
+      } @else if (state.loading) {
+        <p class="range">Loading reporting period…</p>
+      } @else {
+        <p class="range">Reporting period unavailable</p>
+      }
+    </div>
+
+    <div class="controls">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="month">
+        <mat-label>Month</mat-label>
+        <mat-select [value]="store.filters().month" (selectionChange)="onMonthChange($event)">
+          @for (m of months; track m.key) {
+            <mat-option [value]="m.key">{{ m.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-flat-button type="button" (click)="store.refresh()" [disabled]="state.loading">
+        {{ state.loading ? 'Loading…' : 'Refresh' }}
+      </button>
+    </div>
+  </header>
+
+  @if (state.error) {
+    <mat-card appearance="outlined" class="error-card" role="alert">
+      <mat-card-content class="error-content">
+        <div>
+          <strong>{{ state.error }}</strong>
+          @if (state.response) {
+            <div class="sub">Showing the last successfully loaded data.</div>
+          }
+        </div>
+        <button mat-stroked-button type="button" (click)="store.refresh()">Retry</button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="layout">
+    <aside class="filters">
+      <app-engagement-filter
+        [selected]="store.filters().engagements"
+        (toggled)="store.toggleEngagement($event)"
+        (cleared)="store.clearEngagements()"
+      />
+      <app-cost-center-filter
+        [options]="store.costCenterOptions()"
+        [selected]="store.filters().costCenters"
+        (allSelected)="store.selectAllCostCenters()"
+        (toggled)="store.toggleCostCenter($event)"
+      />
+    </aside>
+
+    <main class="content" [attr.aria-busy]="state.loading">
+      @if (state.response) {
+        @if (store.rows().length > 0) {
+          <app-summary-table [rows]="store.rows()" [caption]="selectionLabel()" />
+        } @else {
+          <mat-card appearance="outlined" class="empty" data-testid="empty-state">
+            <mat-card-content>
+              <h2>No data</h2>
+              <p>The current selection does not match any cost center in this month's report.</p>
+              <button mat-flat-button type="button" (click)="store.selectAllCostCenters()">Show all cost centers</button>
+            </mat-card-content>
+          </mat-card>
+        }
+      } @else if (state.loading) {
+        <mat-card appearance="outlined" class="loading" role="status">
+          <mat-card-content>
+            <mat-spinner diameter="40" />
+            <p>Loading performance data…</p>
+          </mat-card-content>
+        </mat-card>
+      } @else if (!state.error) {
+        <mat-card appearance="outlined" class="empty" data-testid="empty-state">
+          <mat-card-content>
+            <h2>No data loaded</h2>
+            <button mat-flat-button type="button" (click)="store.refresh()">Load data</button>
+          </mat-card-content>
+        </mat-card>
+      }
+    </main>
+  </div>
+</div>

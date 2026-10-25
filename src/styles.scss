@@ -1,0 +1,88 @@
+
+@use '@angular/material' as mat;
+
+/* Tailwind directives are processed by PostCSS, not Sass. */
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */
+
+$font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+    ),
+    typography: (
+      plain-family: $font,
+      brand-family: $font,
+    ),
+    density: (
+      scale: -1,
+    ),
+  )
+);
+
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$azure-palette,
+    ),
+    typography: (
+      plain-family: $font,
+      brand-family: $font,
+    ),
+    density: (
+      scale: -1,
+    ),
+  )
+);
+
+@include mat.core();
+
+html {
+  @include mat.all-component-themes($light-theme);
+
+  // Status and surface tokens used by the dashboard's own styles.
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-alt: #f0f3f7;
+  --border: #dde3ea;
+  --text: #1c2733;
+  --muted: #5d6b7a;
+  --good: #137a3a;
+  --bad: #b42318;
+  --bad-bg: #fdecea;
+  --radius: 12px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    @include mat.all-component-colors($dark-theme);
+
+    --bg: #11161c;
+    --surface: #1a2129;
+    --surface-alt: #222b35;
+    --border: #2f3a46;
+    --text: #e6edf3;
+    --muted: #9aa8b6;
+    --good: #4cc47a;
+    --bad: #ff7a6e;
+    --bad-bg: #3a1d1b;
+    color-scheme: dark;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: $font;
+  line-height: 1.45;
+}
